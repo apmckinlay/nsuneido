@@ -140,13 +140,6 @@ namespace Suneido.Language
 			return eol ? T.NEWLINE : T.WHITE;
 		}
 
-//		char next(int i = -1)
-//		{
-//			if (i == -1)
-//				i = si;
-//			return i < src.Length ? src[i] : default(char);
-//		}
-
 		bool match(char c)
 		{
 			if (si >= src.Length || src[si] != c)
@@ -322,7 +315,6 @@ namespace Suneido.Language
 		#endregion
 
 	}
-
 }
 
 namespace Suneido.Language
@@ -343,8 +335,9 @@ namespace Suneido.Language
 
 			test(" \t", T.WHITE);
 			test(" \n \t", T.NEWLINE);
-			test("#(),;?@[]{}~", T.HASH, T.L_PAREN, T.R_PAREN, T.COMMA, T.SEMICOLON,
-				T.Q_MARK, T.AT, T.L_BRACKET, T.R_BRACKET, T.L_CURLY, T.R_CURLY, T.BITNOT);
+			test("#(),;?@[]{}~", 
+			    T.HASH, T.L_PAREN, T.R_PAREN, T.COMMA, T.SEMICOLON, T.Q_MARK,
+			    T.AT, T.L_BRACKET, T.R_BRACKET, T.L_CURLY, T.R_CURLY, T.BITNOT);
 			test(":", T.COLON);
 			test("::", T.RANGELEN);
 			test("==", T.IS); 
@@ -444,5 +437,4 @@ namespace Suneido.Language
 			Assert.IsFalse(lexer.MoveNext());
 		}
 	}
-
 }
