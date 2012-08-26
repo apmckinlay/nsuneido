@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nSuneido", "Lexer\nSuneido.csproj", "{46D522AD-4FD0-4EBB-B116-F13F4ED55619}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nSuneido", "Suneido\nSuneido.csproj", "{46D522AD-4FD0-4EBB-B116-F13F4ED55619}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +15,6 @@ Global
 		{46D522AD-4FD0-4EBB-B116-F13F4ED55619}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Lexer\nSuneido.csproj
+		StartupItem = Suneido\nSuneido.csproj
 	EndGlobalSection
 EndGlobal

@@ -1,0 +1,14 @@
+
+.DS_Store
+
+Suneido/AssemblyInfo.cs
+
+*.exe
+
+*.mdb
+
+*.dll
+
+*.xml
+
+*.test-cache

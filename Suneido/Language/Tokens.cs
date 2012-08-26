@@ -9,18 +9,28 @@ namespace Suneido.Language
 		public readonly string Name;
 		public static readonly Dictionary<string,Token> Keywords = 
 			new Dictionary<string, Token>();
+		readonly Feature feature;
+
+		class Feature { };
+		static Feature INFIX = new Feature();
 
 
-		internal Token(string name)
+		Token(string name, Feature feature = null)
 		{
 			Name = name;
 			if (name.IsLower())
 				Keywords[name] = this;
+			this.feature = feature;
 		}
 
 		public override int GetHashCode()
 		{
 			return Name.GetHashCode();
+		}
+
+		public bool infix()
+		{
+			return feature == INFIX;
 		}
 
 		public override string ToString()
@@ -44,7 +54,7 @@ namespace Suneido.Language
 			COMMA 		= new Token(","),
 			COLON 		= new Token(":"),
 			SEMICOLON 	= new Token(";"),
-			Q_MARK 		= new Token("?"),
+			Q_MARK 		= new Token("?", INFIX),
 			AT 			= new Token("@"),
 			DOT 		= new Token("."),
 			L_PAREN 	= new Token("("),
@@ -53,46 +63,46 @@ namespace Suneido.Language
 			R_BRACKET 	= new Token("]"),
 			L_CURLY 	= new Token("{"),
 			R_CURLY 	= new Token("}"),
-			IS 			= new Token("=="),
-			ISNT 		= new Token("!="),
-			MATCH 		= new Token("=~"),
-			MATCHNOT 	= new Token("!~"),
-			LT 			= new Token("<"),
-			LTE 		= new Token("<="),
-			GT 			= new Token(">"),
-			GTE 		= new Token(">="),
+			IS 			= new Token("==", INFIX),
+			ISNT 		= new Token("!=", INFIX),
+			MATCH 		= new Token("=~", INFIX),
+			MATCHNOT 	= new Token("!~", INFIX),
+			LT 			= new Token("<", INFIX),
+			LTE 		= new Token("<=", INFIX),
+			GT 			= new Token(">", INFIX),
+			GTE 		= new Token(">=", INFIX),
 			NOT 		= new Token("not"),
 			INC 		= new Token("++"),
 			DEC 		= new Token("--"),
-			BITNOT		= new Token("~"),
-			ADD 		= new Token("+"),
-			SUB 		= new Token("-"),
-			CAT 		= new Token("$"),
-			MUL 		= new Token("*"),
-			DIV 		= new Token("/"),
-			MOD 		= new Token("%"),
-			LSHIFT 		= new Token("<<"),
-			RSHIFT 		= new Token(">>"),
-			BITOR 		= new Token("|"),
-			BITAND 		= new Token("&"),
-			BITXOR 		= new Token("^"),
-			EQ 			= new Token("="),
-			ADDEQ 		= new Token("+="),
-			SUBEQ 		= new Token("-="),
-			CATEQ 		= new Token("$="),
-			MULEQ 		= new Token("*="),
-			DIVEQ 		= new Token("/="),
-			MODEQ 		= new Token("%="),
-			LSHIFTEQ 	= new Token("<<="),
-			RSHIFTEQ 	= new Token(">>="),
-			BITOREQ 	= new Token("|="),
-			BITANDEQ 	= new Token("&="),
-			BITXOREQ 	= new Token("^="),
+			BITNOT		= new Token("~", INFIX),
+			ADD 		= new Token("+", INFIX),
+			SUB 		= new Token("-", INFIX),
+			CAT 		= new Token("$", INFIX),
+			MUL 		= new Token("*", INFIX),
+			DIV 		= new Token("/", INFIX),
+			MOD 		= new Token("%", INFIX),
+			LSHIFT 		= new Token("<<", INFIX),
+			RSHIFT 		= new Token(">>", INFIX),
+			BITOR 		= new Token("|", INFIX),
+			BITAND 		= new Token("&", INFIX),
+			BITXOR 		= new Token("^", INFIX),
+			EQ 			= new Token("=", INFIX),
+			ADDEQ 		= new Token("+=", INFIX),
+			SUBEQ 		= new Token("-=", INFIX),
+			CATEQ 		= new Token("$=", INFIX),
+			MULEQ 		= new Token("*=", INFIX),
+			DIVEQ 		= new Token("/=", INFIX),
+			MODEQ 		= new Token("%=", INFIX),
+			LSHIFTEQ 	= new Token("<<=", INFIX),
+			RSHIFTEQ 	= new Token(">>=", INFIX),
+			BITOREQ 	= new Token("|=", INFIX),
+			BITANDEQ 	= new Token("&=", INFIX),
+			BITXOREQ 	= new Token("^=", INFIX),
 			RANGETO 	= new Token(".."),
 			RANGELEN 	= new Token("::"),
 
 			// langauge keywords
-			AND 		= new Token("and"),
+			AND 		= new Token("and", INFIX),
 			BREAK 		= new Token("break"),
 			CALLBACK 	= new Token("callback"),
 			CASE 		= new Token("case"),
@@ -111,7 +121,7 @@ namespace Suneido.Language
 			IF 			= new Token("if"),
 			IN 			= new Token("in"),
 			NEW 		= new Token("new"),
-			OR 			= new Token("or"),
+			OR 			= new Token("or", INFIX),
 			RETURN 		= new Token("return"),
 			STRUCT 		= new Token("struct"),
 			SWITCH 		= new Token("switch"),

@@ -7,8 +7,8 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{46D522AD-4FD0-4EBB-B116-F13F4ED55619}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Lexer</RootNamespace>
-    <AssemblyName>Lexer</AssemblyName>
+    <RootNamespace>Suneido</RootNamespace>
+    <AssemblyName>nsuneido</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -45,6 +45,10 @@
     <Compile Include="Utility\ArraysList.cs" />
     <Compile Include="Utility\Strings.cs" />
     <Compile Include="Utility\Dictionaries.cs" />
+    <Compile Include="Language\Parse.cs" />
+    <Compile Include="Language\AstNode.cs" />
+    <Compile Include="Language\ParseExpression.cs" />
+    <Compile Include="Utility\Check.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

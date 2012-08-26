@@ -29,7 +29,7 @@ namespace Suneido.Language
 
 	}
 
-	class Lexer : IEnumerator<Token>
+	public class Lexer : IEnumerator<Token>
 	{
 		readonly string src;
 		public int si { get; private set; }
@@ -44,6 +44,18 @@ namespace Suneido.Language
 			si = 0;
 		}
 
+		public Lexer(Lexer lexer)
+		{
+			src = lexer.src;
+			si = lexer.si;
+		}
+
+		public void CopyPosition(Lexer lexer)
+		{
+			Check.That(src == lexer.src);
+			si = lexer.si;
+		}
+
 		public bool MoveNext()
 		{
 			token = nextToken();
@@ -53,6 +65,8 @@ namespace Suneido.Language
 		private Token nextToken()
 		{
 			prev = si;
+			Value = null;
+			Keyword = null;
 			if (si >= src.Length)
 				return T.EOF;
 			char c = src[si];
@@ -123,7 +137,7 @@ namespace Suneido.Language
 				return quotedString(c);
 			case '.':
 				return match('.') ? T.RANGETO
-					: Char.IsDigit(src[si]) ? number()
+					: Char.IsDigit(next()) ? number()
 					: T.DOT;
 			default:
 				return Char.IsDigit(c) ? number()
@@ -138,6 +152,12 @@ namespace Suneido.Language
 				if (src[si] == '\n' || src[si] == '\r')
 					eol = true;
 			return eol ? T.NEWLINE : T.WHITE;
+		}
+
+		/// <summary>Does not advance.</summary>
+		char next()
+		{
+			return si < src.Length ? src[si] : default(char);
 		}
 
 		bool match(char c)
@@ -253,11 +273,15 @@ namespace Suneido.Language
 			return T.NUMBER;
 		}
 
-		private bool hexNumber() {
+		private bool hexNumber()
+		{
 			int save = si;
 			if (match('0') && (match('x') || match('X')) &&
 				matchWhile(isHexDigit))
+			{
+				setValue();
 				return true;
+			}
 			si = save;
 			return false;
 		}
@@ -270,10 +294,14 @@ namespace Suneido.Language
 
 		private void exponent()
 		{
-			if (! match('e'))
-				return;
-			match(c => c == '+' || c == '-');
-			matchWhile(Char.IsDigit);
+			int save = si;
+			if (match('e') || match('E'))
+			{
+				match(c => c == '+' || c == '-');
+				if (matchWhile(Char.IsDigit))
+					return;
+			}
+			si = save;
 		}
 		#endregion
 
@@ -403,10 +431,11 @@ namespace Suneido.Language
 			testVal("123", T.NUMBER);
 			testVal("0123", T.NUMBER);
 			test("123.", T.NUMBER, T.DOT);
+			test("#20120826.EndOfMonth", T.HASH, T.NUMBER, T.DOT, T.IDENTIFIER);
 			testVal(".123", T.NUMBER);
 			testVal("123.456", T.NUMBER);
 			test("3..6", T.NUMBER, T.RANGETO, T.NUMBER);
-			testVal("1e6", T.NUMBER);
+			testVal("1E6", T.NUMBER);
 			testVal("1e+6", T.NUMBER);
 			testVal("1e-6", T.NUMBER);
 			testVal(".1e6", T.NUMBER);
@@ -428,8 +457,9 @@ namespace Suneido.Language
 			var lexer = new Lexer(s + ";");
 			lexer.MoveNext();
 			Assert.That(lexer.Current, Is.EqualTo(token));
-			if (value != null)
-				Assert.That(lexer.Value, Is.EqualTo(value));
+			if (value == null)
+				value = s;
+			Assert.That(lexer.Value, Is.EqualTo(value));
 			Assert.That(lexer.Keyword, Is.EqualTo(keyword));
 
 			lexer.MoveNext();
