@@ -100,43 +100,43 @@ namespace Suneido.Language
 			case '~':
 				return T.BITNOT;
 			case ':':
-				return match(':') ? T.RANGELEN : T.COLON;
+				return matchIf(':') ? T.RANGELEN : T.COLON;
 			case '=' :
-				return match('=') ? T.IS : match('~') ? T.MATCH : T.EQ;
+				return matchIf('=') ? T.IS : matchIf('~') ? T.MATCH : T.EQ;
 			case '!':
-				return match('=') ? T.ISNT : match('~') ? T.MATCHNOT : T.NOT;
+				return matchIf('=') ? T.ISNT : matchIf('~') ? T.MATCHNOT : T.NOT;
 			case '<':
-				return match('<') ? (match('=') ? T.LSHIFTEQ : T.LSHIFT)
-					: match('>') ? T.ISNT : match('=') ? T.LTE : T.LT;
+				return matchIf('<') ? (matchIf('=') ? T.LSHIFTEQ : T.LSHIFT)
+					: matchIf('>') ? T.ISNT : matchIf('=') ? T.LTE : T.LT;
 			case '>':
-				return match('>') ? (match('=') ? T.RSHIFTEQ : T.RSHIFT)
-					: match('=') ? T.GTE : T.GT;
+				return matchIf('>') ? (matchIf('=') ? T.RSHIFTEQ : T.RSHIFT)
+					: matchIf('=') ? T.GTE : T.GT;
 			case '|':
-				return match('|') ? T.OR : match('=') ? T.BITOREQ : T.BITOR;
+				return matchIf('|') ? T.OR : matchIf('=') ? T.BITOREQ : T.BITOR;
 			case '&':
-				return match('&') ? T.AND : match('=') ? T.BITANDEQ : T.BITAND;
+				return matchIf('&') ? T.AND : matchIf('=') ? T.BITANDEQ : T.BITAND;
 			case '^':
-				return match('=') ? T.BITXOREQ : T.BITXOR;
+				return matchIf('=') ? T.BITXOREQ : T.BITXOR;
 			case '-':
-				return match('-') ? T.DEC : match('=') ? T.SUBEQ : T.SUB;
+				return matchIf('-') ? T.DEC : matchIf('=') ? T.SUBEQ : T.SUB;
 			case '+':
-				return match('+') ? T.INC : match('=') ? T.ADDEQ : T.ADD;
+				return matchIf('+') ? T.INC : matchIf('=') ? T.ADDEQ : T.ADD;
 			case '/':
-				return match('/') ? lineComment() : match('*') ? spanComment()
-					: match('=') ? T.DIVEQ : T.DIV;
+				return matchIf('/') ? lineComment() : matchIf('*') ? spanComment()
+					: matchIf('=') ? T.DIVEQ : T.DIV;
 			case '*':
-				return match('=') ? T.MULEQ : T.MUL;
+				return matchIf('=') ? T.MULEQ : T.MUL;
 			case '%':
-				return match('=') ? T.MODEQ : T.MOD;
+				return matchIf('=') ? T.MODEQ : T.MOD;
 			case '$':
-				return match('=') ? T.CATEQ : T.CAT;
+				return matchIf('=') ? T.CATEQ : T.CAT;
 			case '`':
 				return rawString();
 			case '"':
 			case '\'':
 				return quotedString(c);
 			case '.':
-				return match('.') ? T.RANGETO
+				return matchIf('.') ? T.RANGETO
 					: Char.IsDigit(next()) ? number()
 					: T.DOT;
 			default:
@@ -160,7 +160,7 @@ namespace Suneido.Language
 			return si < src.Length ? src[si] : default(char);
 		}
 
-		bool match(char c)
+		bool matchIf(char c)
 		{
 			if (si >= src.Length || src[si] != c)
 				return false;
@@ -168,7 +168,7 @@ namespace Suneido.Language
 			return true;
 		}
 
-		bool match(Func<char,bool> pred)
+		bool matchIf(Func<char,bool> pred)
 		{
 			if (si >= src.Length || ! pred(src[si]))
 				return false;
@@ -202,7 +202,7 @@ namespace Suneido.Language
 		Token rawString()
 		{
 			matchWhile(c => c != '`');
-			match('`');
+			matchIf('`');
 			Value = src.Substring(prev + 1, si - prev - 2);
 			return T.STRING;
 		}
@@ -213,30 +213,30 @@ namespace Suneido.Language
 			var sb = new StringBuilder();
 			while (si < src.Length && src[si] != quote)
 				sb.Append(escape());
-			match(quote);
+			matchIf(quote);
 			Value = sb.ToString();
 			return T.STRING;
 		}
 
 		char escape()
 		{
-			if (! match('\\'))
+			if (! matchIf('\\'))
 				return src[si++];
 			int save = si;
 			int d1, d2, d3;
-			if (match('n'))
+			if (matchIf('n'))
 				return '\n';
-			else if (match('r'))
+			else if (matchIf('r'))
 				return '\r';
-			else if (match('t'))
+			else if (matchIf('t'))
 				return '\t';
-			else if (match('\\'))
+			else if (matchIf('\\'))
 				return '\\';
-			else if (match('"'))
+			else if (matchIf('"'))
 				return '"';
-			else if (match('\''))
+			else if (matchIf('\''))
 				return '\'';
-			else if (match('x') && digit(16, out d1) && digit(16, out d2))
+			else if (matchIf('x') && digit(16, out d1) && digit(16, out d2))
 				return (char) (16 * d1 + d2);
 			else if (digit(8, out d1) && digit(8, out d2) && digit(8, out d3))
 				return (char) (64 * d1 + 8 * d2 + d3);
@@ -253,7 +253,7 @@ namespace Suneido.Language
 			dig = Char.IsDigit(c) ? c - '0' 
 				: isHexDigit(c) ? 10 + Char.ToLower(c) - 'a'
 				: 99;
-			return (dig < radix) ? match(c) : false;
+			return (dig < radix) ? matchIf(c) : false;
 		}
 		#endregion
 		
@@ -264,7 +264,7 @@ namespace Suneido.Language
 			if (hexNumber())
 				return T.NUMBER;
 			matchWhile(Char.IsDigit);
-			if (match('.'))
+			if (matchIf('.'))
 				matchWhile(Char.IsDigit);
 			exponent();
 			if (src[si - 1] == '.')
@@ -276,7 +276,7 @@ namespace Suneido.Language
 		private bool hexNumber()
 		{
 			int save = si;
-			if (match('0') && (match('x') || match('X')) &&
+			if (matchIf('0') && (matchIf('x') || matchIf('X')) &&
 				matchWhile(isHexDigit))
 			{
 				setValue();
@@ -295,9 +295,9 @@ namespace Suneido.Language
 		private void exponent()
 		{
 			int save = si;
-			if (match('e') || match('E'))
+			if (matchIf('e') || matchIf('E'))
 			{
-				match(c => c == '+' || c == '-');
+				matchIf(c => c == '+' || c == '-');
 				if (matchWhile(Char.IsDigit))
 					return;
 			}
@@ -308,7 +308,7 @@ namespace Suneido.Language
 		Token identifier()
 		{
 			matchWhile(c => Char.IsLetterOrDigit(c) || c == '_');
-			match(c => c == '!' || c == '?');
+			matchIf(c => c == '!' || c == '?');
 			setValue();
 
 			Keyword = Token.Keywords.GetOrElse(Value, null);
