@@ -54,6 +54,7 @@
     <Compile Include="Language\DyExprOutput.cs" />
     <Compile Include="Language\AstOutput.cs" />
     <Compile Include="Language\Value.cs" />
+    <Compile Include="Utility\ImmutableList.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

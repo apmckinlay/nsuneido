@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Runtime.InteropServices;
+using Suneido.Utility;
 
 namespace Suneido
 {
@@ -10,6 +11,9 @@ namespace Suneido
 	{
 		public static void Main(string[] args)
 		{
+			var x = ImmutableList.Of(1, 2, 3);
+			foreach (var z in x)
+				Console.WriteLine(z);
 		}
 
 		public static void Benchmark()
