@@ -4,6 +4,12 @@ using System.Collections.Generic;
 
 namespace Suneido.Utility
 {
+	/// <summary>
+	/// A list stored in chunks in a List<T> of List<T>.
+	/// Intended for very large lists to avoid making single huge arrays
+	/// since they are hard on allocation and garbage collection.
+	/// </summary>
+	/// Does not currently implement standard interfaces like IList
 	public class ArraysList<T>
 	{
 		const int CHUNK_SIZE = 1024;
@@ -28,7 +34,8 @@ namespace Suneido.Utility
 			data.Add(new List<T>(CHUNK_SIZE));
 		}
 
-		public T this[int i] {
+		public T this[int i]
+		{
 			get { return data[chunk(i)][offset(i)]; }
 			set { data[chunk(i)][offset(i)] = value; }
 		}

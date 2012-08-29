@@ -50,6 +50,10 @@
     <Compile Include="Language\AstNode.cs" />
     <Compile Include="Language\ParseExpression.cs" />
     <Compile Include="Utility\Check.cs" />
+    <Compile Include="Language\ParseOutput.cs" />
+    <Compile Include="Language\DyExprOutput.cs" />
+    <Compile Include="Language\AstOutput.cs" />
+    <Compile Include="Language\Value.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

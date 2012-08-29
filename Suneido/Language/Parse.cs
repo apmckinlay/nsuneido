@@ -6,17 +6,19 @@ namespace Suneido.Language
 	/// <summary>
 	/// Base class for parsing
 	/// </summary>
-	public class Parse
+	internal class Parse<TAst>
 	{
 		readonly Lexer lexer;
 		readonly Lexer ahead; // used for look ahead
+		protected readonly ParseOutput<TAst> builder;
 		protected int statementNest = 0;
 
-		public Parse(Lexer lexer)
+		internal Parse(Lexer lexer, ParseOutput<TAst> builder)
 		{
 			this.lexer = lexer;
 			ahead = new Lexer(lexer);
 			lexer.MoveNext();
+			this.builder = builder;
 		}
 
 		protected Token token
@@ -24,13 +26,13 @@ namespace Suneido.Language
 		protected string value
 			{ get { return lexer.Value; }}
 
-		internal AstNode matchReturn(Token expected, AstNode result)
+		internal TAst matchReturn(Token expected, TAst result)
 		{
 			match(expected);
 			return result;
 		}
 
-		internal AstNode matchReturn(AstNode result)
+		internal TAst matchReturn(TAst result)
 		{
 			match();
 			return result;

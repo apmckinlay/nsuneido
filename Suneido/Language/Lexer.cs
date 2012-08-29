@@ -32,10 +32,15 @@ namespace Suneido.Language
 	public class Lexer : IEnumerator<Token>
 	{
 		readonly string src;
+
 		public int si { get; private set; }
+
 		public int prev { get; private set; }
+
 		Token token;
+
 		public string Value { get; private set; }
+
 		public Token Keyword { get; private set; }
 
 		public Lexer(string src)
@@ -73,8 +78,7 @@ namespace Suneido.Language
 			if (Char.IsWhiteSpace(c))
 				return whitespace();
 			++si;
-			switch (c)
-			{
+			switch (c) {
 			case '#':
 				return T.HASH;
 			case '(': 
@@ -101,7 +105,7 @@ namespace Suneido.Language
 				return T.BITNOT;
 			case ':':
 				return matchIf(':') ? T.RANGELEN : T.COLON;
-			case '=' :
+			case '=':
 				return matchIf('=') ? T.IS : matchIf('~') ? T.MATCH : T.EQ;
 			case '!':
 				return matchIf('=') ? T.ISNT : matchIf('~') ? T.MATCHNOT : T.NOT;
@@ -146,7 +150,8 @@ namespace Suneido.Language
 			}
 		}
 
-		private Token whitespace() {
+		private Token whitespace()
+		{
 			bool eol = false;
 			for (; si < src.Length && Char.IsWhiteSpace(src[si]); ++si)
 				if (src[si] == '\n' || src[si] == '\r')
@@ -237,11 +242,10 @@ namespace Suneido.Language
 			else if (matchIf('\''))
 				return '\'';
 			else if (matchIf('x') && digit(16, out d1) && digit(16, out d2))
-				return (char) (16 * d1 + d2);
+				return (char)(16 * d1 + d2);
 			else if (digit(8, out d1) && digit(8, out d2) && digit(8, out d3))
-				return (char) (64 * d1 + 8 * d2 + d3);
-			else
-			{
+				return (char)(64 * d1 + 8 * d2 + d3);
+			else {
 				si = save;
 				return '\\';
 			}
@@ -277,8 +281,7 @@ namespace Suneido.Language
 		{
 			int save = si;
 			if (matchIf('0') && (matchIf('x') || matchIf('X')) &&
-				matchWhile(isHexDigit))
-			{
+				matchWhile(isHexDigit)) {
 				setValue();
 				return true;
 			}
@@ -295,8 +298,7 @@ namespace Suneido.Language
 		private void exponent()
 		{
 			int save = si;
-			if (matchIf('e') || matchIf('E'))
-			{
+			if (matchIf('e') || matchIf('E')) {
 				matchIf(c => c == '+' || c == '-');
 				if (matchWhile(Char.IsDigit))
 					return;
@@ -332,14 +334,18 @@ namespace Suneido.Language
 		#region IEnumerator
 		public Token Current 
 			{ get { return token; } }
+
 		object IEnumerator.Current 
 			{ get { return Current; } }
 
 		public void Reset()
-			{ si = 0; }
+		{
+			si = 0;
+		}
 
 		public void Dispose()
-			{ }
+		{
+		}
 		#endregion
 
 	}

@@ -4,92 +4,88 @@ using T = Suneido.Language.Token;
 
 namespace Suneido.Language
 {
-	public class ParseExpression : Parse
+	internal class ParseExpression<TAst> : Parse<TAst>
 	{
-		public ParseExpression(Lexer lexer) : base(lexer)
+		internal ParseExpression(Lexer lexer, ParseOutput<TAst> builder) 
+			: base(lexer, builder)
 		{
 		}
 
-		public AstNode parse()
+		internal TAst parse()
 		{
 			return matchReturn(T.EOF, expression());
 		}
 
-		AstNode expression()
+		TAst expression()
 		{
 			return conditionalExpression();
 		}
 
-		private AstNode conditionalExpression() {
-			AstNode expr = orExpression();
-			if (token == T.Q_MARK) 
-			{
+		private TAst conditionalExpression()
+		{
+			TAst expr = orExpression();
+			if (matchIf(T.Q_MARK)) {
 				++statementNest;
-				match(T.Q_MARK);
-				AstNode t = expression();
+				TAst t = expression();
 				match(T.COLON);
 				--statementNest;
-				AstNode f = expression();
-				return new AstNode(T.Q_MARK, expr, t, f);
-			} 
-			else
+				TAst f = expression();
+				return builder.conditional(expr, t, f);
+			} else
 				return expr;
 		}
 
-		private AstNode orExpression()
+		private TAst orExpression()
 		{
-			AstNode expr = andExpression();
-			if (token != T.OR)
-				return expr;
-			var list = new List<AstNode>() { expr };
+			TAst expr = andExpression();
 			while (matchIf(T.OR))
-				list.Add(andExpression());
-			return new AstNode(T.OR, list);
+				expr = builder.or(expr, andExpression());
+			return expr;
 		}
 
-		private AstNode andExpression()
+		private TAst andExpression()
 		{
-			AstNode expr = inExpression();
-			if (token != T.AND)
-				return expr;
-			var list = new List<AstNode>() { expr };
+			TAst expr = inExpression();
 			while (matchIf(T.AND))
-				list.Add(inExpression());
-			return new AstNode(T.AND, list);
+				expr = builder.and(expr, inExpression());
+			return expr;
 		}
 
-		AstNode inExpression()
+		TAst inExpression()
 		{
 			return addExpression(); // TODO
 		}
 
-	 	private AstNode addExpression()
+		private TAst addExpression()
 		{
-			AstNode result = mulExpression();
+			TAst expr = mulExpression();
 			while (token == T.ADD || token == T.SUB || token == T.CAT) {
 				Token op = token;
 				match();
-				result = new AstNode(op, result, mulExpression());
+				expr = builder.binary(op, expr, mulExpression());
 			}
-			return result;
+			return expr;
 		}
 
-		private AstNode mulExpression()
+		private TAst mulExpression()
 		{
-			AstNode result = unaryExpression();
+			TAst result = unaryExpression();
 			while (token == T.MUL || token == T.DIV || token == T.MOD) {
 				Token op = token;
 				match();
-				result = new AstNode(op, result, unaryExpression());
+				result = builder.binary(op, result, unaryExpression());
 			}
 			return result;
 		}
 
-		AstNode unaryExpression()
+		TAst unaryExpression()
 		{
-			if (token == T.NUMBER || token == T.STRING || token == T.IDENTIFIER)
-				return matchReturn(new AstNode(token, value));
-			throw syntaxError();
+			if (token == T.NUMBER || token == T.STRING)
+				return matchReturn(builder.constant(token, value));
+			else if (token == T.IDENTIFIER)
+				return matchReturn(builder.identifier(value));
+			else
+				throw syntaxError();
 		}
 
 	}
@@ -111,7 +107,7 @@ namespace Suneido.Language
 
 		void test(string src, string expected)
 		{
-			var parse = new ParseExpression(new Lexer(src));
+			var parse = new ParseExpression<AstNode>(new Lexer(src), new AstOutput());
 			AstNode result = parse.parse();
 			Assert.That(result.ToString(), Is.EqualTo(expected));
 		}
