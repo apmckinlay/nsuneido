@@ -55,13 +55,23 @@
     <Compile Include="Language\AstOutput.cs" />
     <Compile Include="Language\Value.cs" />
     <Compile Include="Utility\ImmutableList.cs" />
+    <Compile Include="Database\ArrayBuffer.cs" />
+    <Compile Include="Database\MappedBuffer.cs" />
+    <Compile Include="Database\Storage.cs" />
+    <Compile Include="Utility\Attributes.cs" />
+    <Compile Include="Database\ByteBuffer.cs" />
+    <Compile Include="Utility\Arrays.cs" />
+    <Compile Include="Utility\Bytes.cs" />
+    <Compile Include="Database\HeapStorage.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="porting.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Language\" />
     <Folder Include="Utility\" />
+    <Folder Include="Database\" />
   </ItemGroup>
 </Project>

@@ -1,0 +1,22 @@
+
+Longs.BYTES				Bytes.Long
+
+Integers.MAX_VALUE		Int32.MaxValue
+
+boolean					bool
+
+braces					
+
+private					//delete
+
+public					//add
+
+methods					//capitalize
+
+package					namespace // + braces & indent
+
+doc comments
+
+@Override				override
+
+synchronized			???
